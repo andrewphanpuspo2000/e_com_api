@@ -13,6 +13,10 @@ app.use(express.json());
 //database connection
 import mongoConnect from "./src/config/mongoConfig.js";
 mongoConnect();
+//router API
+import userRouter from "./src/router/userRouter.js";
+app.use("/api/v1/user", userRouter);
+
 //api default
 app.get("/", (req, res) => {
   res.json({
