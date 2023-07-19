@@ -45,6 +45,7 @@ router.get("/", async (req, res) => {
         ? res.json({
             status: "success",
             message: "success to login",
+            user: data,
           })
         : res.json({
             status: "error",
