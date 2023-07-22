@@ -7,3 +7,10 @@ export const pushUser = (user) => {
 export const findEmailExist = (email) => {
   return userSchema.findOne(email);
 };
+export const updateById = ({ _id, ...rest }) => {
+  return userSchema.findAndUpdateById(_id, rest);
+};
+
+export const deleteById = (_id) => {
+  return userSchema.findAndUpdateById(_id);
+};

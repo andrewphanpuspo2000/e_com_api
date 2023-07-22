@@ -1,6 +1,27 @@
 @root= http://localhost:8000/
 
 ###
-@user= {{root}}/api/v1/user
+@user= {{root}}api/v1/user
 
 GET {{root}}
+
+####
+POST {{user}}
+Content-Type: application/json
+
+
+    {
+        "role":"admin",
+        "fName":"hdsab",
+        "lName":"djisaj",
+        "email":"1234asndia@gmail.com",
+        "password":"213sad"
+    }
+###
+GET {{user}}
+Content-Type: application/json
+
+{
+    "email":"1234@gmail",
+    "password":"123"
+}
