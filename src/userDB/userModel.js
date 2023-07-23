@@ -14,3 +14,6 @@ export const updateById = ({ _id, ...rest }) => {
 export const deleteById = (_id) => {
   return userSchema.findAndUpdateById(_id);
 };
+export const updateActivation = (target, data) => {
+  return userSchema.findOneAndUpdate(target, data, { new: true });
+};

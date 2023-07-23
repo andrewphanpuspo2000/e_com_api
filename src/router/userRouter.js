@@ -1,8 +1,15 @@
 import express from "express";
-import { findEmailExist, pushUser } from "../userDB/userModel.js";
+import {
+  findEmailExist,
+  pushUser,
+  updateActivation,
+} from "../userDB/userModel.js";
 import { comparePass, encryptPass } from "../encrypt/encryptPass.js";
 import { newAdminValidation } from "../validation/joiValidation.js";
-import { accountVerificationEmail } from "../nodemailer/nodemailer.js";
+import {
+  accountVerificationEmail,
+  confirmVerificationEmail,
+} from "../nodemailer/nodemailer.js";
 import { v4 as uuidv4 } from "uuid";
 
 const router = express.Router();
@@ -19,7 +26,7 @@ router.post("/", newAdminValidation, async (req, res, next) => {
     if (!userValid?._id) {
       const result = await pushUser(user);
       if (result?._id) {
-        const link = `${process.env.WEB_DOMAIN}/admin-verificaton?c=${result.verificationCode}&e=${result.email}`;
+        const link = `${process.env.WEB_DOMAIN}/admin-verification?c=${result.verificationCode}&e=${result.email}`;
         await accountVerificationEmail({
           fName: result.fName,
           email: result.email,
@@ -85,6 +92,35 @@ router.get("/", async (req, res) => {
     res.json({
       status: "error",
       message: err.message,
+    });
+  }
+});
+
+router.patch("/verify", async (req, res) => {
+  try {
+    const { email, code } = req.body;
+
+    const respond = await updateActivation(
+      { email, verificationCode: code },
+      { isVerified: true, verificationCode: "" }
+    );
+    if (respond?._id) {
+      await confirmVerificationEmail(respond);
+      res.json({
+        status: "success",
+        message: "success to verify",
+        user: respond,
+      });
+    } else {
+      res.json({
+        status: "error",
+        message: "Link has expired",
+      });
+    }
+  } catch (error) {
+    res.json({
+      status: "error",
+      message: error.message,
     });
   }
 });
