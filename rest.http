@@ -25,3 +25,11 @@ Content-Type: application/json
     "email":"1234@gmail",
     "password":"123"
 }
+
+###
+POST {{root}}api/v1/category
+Content-Type: application/json
+
+{
+    "title":"Home Goods"
+}
