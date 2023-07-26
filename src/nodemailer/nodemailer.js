@@ -23,8 +23,11 @@ export const accountVerificationEmail = async (obj) => {
     text: `Hello ${fName}, please activate your account. Link: ${link}`, // plain text body
     html: `
     <b>Hello ${fName},</b>
-    <p>${link}</p>
-    
+    <p>Please click the link: <a>${link}</a></p>
+
+
+    <p>Kind Regards,</p>
+    <p>Bros Team</p>
     `, // html body
   });
 
