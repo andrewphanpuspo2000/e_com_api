@@ -25,3 +25,48 @@ export const newAdminValidation = (req, res, next) => {
     next(error);
   }
 };
+
+export const updateCatValidation = (req, res, next) => {
+  try {
+    //define the schema
+    // check data againts the rule
+
+    const schema = Joi.object({
+      _id: Joi.string().required(),
+      title: Joi.string().required(),
+      slug: Joi.string().required(),
+      status: Joi.string().required(),
+    });
+    const { error } = schema.validate(req.body);
+
+    error
+      ? res.json({
+          status: "error",
+          message: error.message,
+        })
+      : next();
+  } catch (error) {
+    next(error);
+  }
+};
+export const loginValidation = (req, res, next) => {
+  try {
+    //define the schema
+    // check data againts the rule
+
+    const schema = Joi.object({
+      email: Joi.string().required().email({ minDomainSegments: 2 }),
+      password: Joi.string().required(),
+    });
+    const { error } = schema.validate(req.query);
+
+    error
+      ? res.json({
+          status: "error",
+          message: error.message,
+        })
+      : next();
+  } catch (error) {
+    next(error);
+  }
+};

@@ -10,6 +10,9 @@ export const findEmailExist = (email) => {
 export const updateById = ({ _id, ...rest }) => {
   return userSchema.findAndUpdateById(_id, rest);
 };
+export const updateByEmail = (filter, object) => {
+  return userSchema.findOneAndUpdate(filter, object, { new: true });
+};
 
 export const deleteById = (_id) => {
   return userSchema.findAndUpdateById(_id);

@@ -5,12 +5,16 @@ import {
   updateActivation,
 } from "../userDB/userModel.js";
 import { comparePass, encryptPass } from "../encrypt/encryptPass.js";
-import { newAdminValidation } from "../validation/joiValidation.js";
+import {
+  loginValidation,
+  newAdminValidation,
+} from "../validation/joiValidation.js";
 import {
   accountVerificationEmail,
   confirmVerificationEmail,
 } from "../nodemailer/nodemailer.js";
 import { v4 as uuidv4 } from "uuid";
+import { createAccessJWT, createRefreshToken } from "../JWT/jwt.js";
 
 const router = express.Router();
 
@@ -64,24 +68,30 @@ router.post("/", newAdminValidation, async (req, res, next) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", loginValidation, async (req, res) => {
   try {
     const { email, password } = req.query;
 
     const data = await findEmailExist({ email });
 
+    //find and check the user by email
+    //check the password
+    // create 2 jwts:
+    /////create accessJWT amd storte in session table
+    /////create refreshJWT amd storte in session table
+
     if (data?._id) {
       const passValidation = comparePass(password, data.password);
-      passValidation
-        ? res.json({
-            status: "success",
-            message: "success to login",
-            user: data,
-          })
-        : res.json({
-            status: "error",
-            message: "password is incorrect",
-          });
+      if (passValidation) {
+        const accessJWT = await createAccessJWT(email);
+        const refreshJWT = await createRefreshToken(email);
+
+        res.json({
+          status: "success",
+          message: "Success login",
+          token: { accessJWT, refreshJWT },
+        });
+      }
     } else {
       res.json({
         status: "error",

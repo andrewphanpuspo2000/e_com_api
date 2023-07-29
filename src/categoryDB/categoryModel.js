@@ -7,3 +7,9 @@ export const addTitle = (data) => {
 export const getAllCategories = () => {
   return categorySchema.find();
 };
+export const updateCatModel = (id, obj) => {
+  return categorySchema.findByIdAndUpdate(id, obj);
+};
+export const deleteCatModel = (id) => {
+  return categorySchema.findByIdAndDelete(id);
+};

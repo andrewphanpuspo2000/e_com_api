@@ -1,6 +1,12 @@
 import express from "express";
 import slugify from "slugify";
-import { addTitle, getAllCategories } from "../categoryDB/categoryModel.js";
+import {
+  addTitle,
+  getAllCategories,
+  updateCatModel,
+} from "../categoryDB/categoryModel.js";
+import { updateCatValidation } from "../validation/joiValidation.js";
+
 const router = express.Router();
 
 router.post("/", async (req, res, next) => {
@@ -31,6 +37,21 @@ router.get("/", async (req, res, next) => {
         status: "success",
         message: "data has been retrieved",
         result,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+router.put("/", async (req, res, next) => {
+  try {
+    const { _id, ...rest } = req.body;
+    const result = await updateCatModel(_id, rest);
+
+    if (result?._id) {
+      res.json({
+        status: "success",
+        message: "data has been updated",
       });
     }
   } catch (error) {
