@@ -46,6 +46,8 @@ router.get("/", async (req, res, next) => {
 router.put("/", async (req, res, next) => {
   try {
     const { _id, ...rest } = req.body;
+    rest.slug = slugify(rest.title, { trim: true, lower: false });
+
     const result = await updateCatModel(_id, rest);
 
     if (result?._id) {

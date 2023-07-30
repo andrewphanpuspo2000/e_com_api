@@ -16,6 +16,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { createAccessJWT, createRefreshToken } from "../JWT/jwt.js";
 import { auth } from "../middleware/authMiddleware.js";
+import { deleteSessionToken } from "../sessionModel/SessionModel.js";
 
 const router = express.Router();
 
@@ -146,5 +147,14 @@ router.get("/getUser", auth, (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+//logout
+router.post("/logout", (req, res, next) => {
+  try {
+    const { accessJWT, refreshJWT } = req.body;
+
+    accessJWT && deleteSessionToken(accessJWT);
+  } catch (err) {}
 });
 export default router;
