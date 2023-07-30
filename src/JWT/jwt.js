@@ -4,7 +4,7 @@ import { updateByEmail } from "../userDB/userModel.js";
 
 export const createAccessJWT = async (email) => {
   const token = jwt.sign({ email }, process.env.JWT_ACCESS_SECRET, {
-    expiresIn: "1m",
+    expiresIn: "10m",
   });
   await storeToken({ token, associate: email });
   return token;
@@ -17,4 +17,8 @@ export const createRefreshToken = async (email) => {
   const updateAdmin = await updateByEmail({ email }, { refreshJWT });
   console.log(updateAdmin);
   return refreshJWT;
+};
+
+export const verifyAccessJWT = (token) => {
+  return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 };

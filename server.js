@@ -18,7 +18,8 @@ import userRouter from "./src/router/userRouter.js";
 
 app.use("/api/v1/user", userRouter);
 import categoryRouter from "./src/router/categoryRouter.js";
-app.use("/api/v1/category", categoryRouter);
+import { auth } from "./src/middleware/authMiddleware.js";
+app.use("/api/v1/category", auth, categoryRouter);
 //api default
 app.get("/", (req, res) => {
   res.json({

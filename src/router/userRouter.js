@@ -15,6 +15,7 @@ import {
 } from "../nodemailer/nodemailer.js";
 import { v4 as uuidv4 } from "uuid";
 import { createAccessJWT, createRefreshToken } from "../JWT/jwt.js";
+import { auth } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -112,7 +113,7 @@ router.patch("/verify", async (req, res) => {
 
     const respond = await updateActivation(
       { email, verificationCode: code },
-      { isVerified: true, verificationCode: "" }
+      { isVerified: true, verificationCode: "", status: "active" }
     );
     if (respond?._id) {
       await confirmVerificationEmail(respond);
@@ -132,6 +133,18 @@ router.patch("/verify", async (req, res) => {
       status: "error",
       message: error.message,
     });
+  }
+});
+
+router.get("/getUser", auth, (req, res, next) => {
+  try {
+    res.json({
+      status: "success",
+      message: "here is the data",
+      user: req.userInfo,
+    });
+  } catch (err) {
+    next(err);
   }
 });
 export default router;

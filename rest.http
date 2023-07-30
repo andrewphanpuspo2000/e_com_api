@@ -22,7 +22,7 @@ GET {{user}}
 Content-Type: application/json
 
 {
-    "email":"1234@gmail",
+    "email":"1234@gmail.com",
     "password":"123"
 }
 
@@ -33,3 +33,7 @@ Content-Type: application/json
 {
     "title":"Home Goods"
 }
+###
+GET {{root}}api/v1/category
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJhYmFiYWJAZ21haWwuY29tIiwiaWF0IjoxNjkwNjc5MTMxLCJleHAiOjE2OTA2Nzk3MzF9.OI7A9GbzmrT8KTeP9PFcNbq7ijXQ7YFjWPBW8PimOeg
+
