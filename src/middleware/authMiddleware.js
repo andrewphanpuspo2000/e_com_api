@@ -1,4 +1,8 @@
-import { verifyAccessJWT } from "../JWT/jwt.js";
+import {
+  createAccessJWT,
+  verifyAccessJWT,
+  verifyRefreshJWT,
+} from "../JWT/jwt.js";
 import { findEmailExist, getOneAdmin } from "../userDB/userModel.js";
 
 export const auth = async (req, res, next) => {
@@ -43,13 +47,22 @@ export const refreshAuth = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
     //2.decode the JWT
-    const decode = verifyAccessJWT(authorization);
+    const decode = verifyRefreshJWT(authorization);
     //3. ectract the email and get user by email
     if (decode?.email) {
       const user = await getOneAdmin({
         email: decode.email,
         refreshJWT: authorization,
       });
+      const accessJWT = await createAccessJWT(decode.email);
+      if (user?._id && user?.status === "active") {
+        return res.json({
+          status: "success",
+          accessJWT,
+        });
+      }
     }
-  } catch (err) {}
+  } catch (err) {
+    next(err);
+  }
 };

@@ -15,7 +15,7 @@ import {
 } from "../nodemailer/nodemailer.js";
 import { v4 as uuidv4 } from "uuid";
 import { createAccessJWT, createRefreshToken } from "../JWT/jwt.js";
-import { auth } from "../middleware/authMiddleware.js";
+import { auth, refreshAuth } from "../middleware/authMiddleware.js";
 import { deleteSessionToken } from "../sessionModel/SessionModel.js";
 
 const router = express.Router();
@@ -157,4 +157,7 @@ router.post("/logout", (req, res, next) => {
     accessJWT && deleteSessionToken(accessJWT);
   } catch (err) {}
 });
+
+// create accessToken
+router.get("/get-accessJWT", refreshAuth);
 export default router;
