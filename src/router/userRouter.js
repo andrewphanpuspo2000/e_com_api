@@ -3,6 +3,7 @@ import {
   findEmailExist,
   pushUser,
   updateActivation,
+  updateById,
 } from "../userDB/userModel.js";
 import { comparePass, encryptPass } from "../encrypt/encryptPass.js";
 import {
@@ -28,7 +29,6 @@ router.post("/", newAdminValidation, async (req, res, next) => {
     user.verificationCode = uuidv4(); //create unique id
     const userValid = await findEmailExist({ email });
 
-    console.log(userValid);
     if (!userValid?._id) {
       const result = await pushUser(user);
       if (result?._id) {
@@ -160,4 +160,17 @@ router.post("/logout", (req, res, next) => {
 
 // create accessToken
 router.get("/get-accessJWT", refreshAuth);
+
+router.post("/admin-logout", async (req, res, next) => {
+  try {
+    const { _id, accessJWT, refreshJWT } = req.body;
+    accessJWT && (await deleteSessionToken(accessJWT));
+
+    if (refreshJWT && _id) {
+      const result = await updateById({ _id, refreshJWT: "" });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
 export default router;

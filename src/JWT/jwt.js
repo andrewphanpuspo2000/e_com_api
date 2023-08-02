@@ -15,7 +15,6 @@ export const createRefreshToken = async (email) => {
     expiresIn: "30d",
   });
   const updateAdmin = await updateByEmail({ email }, { refreshJWT });
-  console.log(updateAdmin);
   return refreshJWT;
 };
 
@@ -23,6 +22,5 @@ export const verifyAccessJWT = (token) => {
   return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 };
 export const verifyRefreshJWT = (token) => {
-  console.log(token);
   return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
 };

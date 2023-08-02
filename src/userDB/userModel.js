@@ -11,7 +11,7 @@ export const getOneAdmin = (filter) => {
   return userSchema.findOne(filter);
 };
 export const updateById = ({ _id, ...rest }) => {
-  return userSchema.findAndUpdateById(_id, rest);
+  return userSchema.findByIdAndUpdate(_id, rest);
 };
 export const updateByEmail = (filter, object) => {
   return userSchema.findOneAndUpdate(filter, object, { new: true });

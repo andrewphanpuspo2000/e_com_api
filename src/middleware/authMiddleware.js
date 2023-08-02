@@ -17,7 +17,6 @@ export const auth = async (req, res, next) => {
     if (decode?.email) {
       const user = await findEmailExist({ email: decode?.email });
       //4. check if user is active
-      console.log(user);
       if (user?._id && user?.status === "active") {
         user.password = undefined;
         user.refreshJWT = undefined;
