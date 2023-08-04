@@ -2,6 +2,7 @@ import express from "express";
 import slugify from "slugify";
 import {
   addTitle,
+  deleteCatModel,
   getAllCategories,
   updateCatModel,
 } from "../categoryDB/categoryModel.js";
@@ -58,6 +59,21 @@ router.put("/", async (req, res, next) => {
     }
   } catch (error) {
     next(error);
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const respon = await deleteCatModel(id);
+    if (respon?._id) {
+      res.json({
+        status: "success",
+        message: "Category has been deleted",
+      });
+    }
+  } catch (err) {
+    next(err);
   }
 });
 export default router;
