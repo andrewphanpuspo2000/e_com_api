@@ -3,6 +3,9 @@
 ###
 @user= {{root}}api/v1/user
 
+####
+@payment= {{root}}api/v1/payment
+
 GET {{root}}
 
 ####
@@ -27,6 +30,10 @@ Content-Type: application/json
 }
 
 ###
+GET {{user}}/get-accessJWT
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imxha2VAZ21haWwuY29tIiwiaWF0IjoxNjkwNjg4Mzk4LCJleHAiOjE2OTA2ODg5OTh9.t6UTgPmSkexDxWZZRSdJhvNxrwJvF3LCNgOEj2beBCg
+
+###
 POST {{root}}api/v1/category
 Content-Type: application/json
 
@@ -37,3 +44,6 @@ Content-Type: application/json
 GET {{root}}api/v1/category
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJhYmFiYWJAZ21haWwuY29tIiwiaWF0IjoxNjkwNjc5MTMxLCJleHAiOjE2OTA2Nzk3MzF9.OI7A9GbzmrT8KTeP9PFcNbq7ijXQ7YFjWPBW8PimOeg
 
+
+###
+GET {{payment}}
