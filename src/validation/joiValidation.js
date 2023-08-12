@@ -103,7 +103,7 @@ export const newProductValidation = (req, res, next) => {
       sku: Joi.string().required(),
       price: Joi.number().required(),
       qty: Joi.number().required(),
-      salesPrice: Joi.string().required(),
+      salesPrice: Joi.number().required(),
       salesStart: Joi.string().required().allow("", null),
       salesEnd: Joi.string().required().allow("", null),
       description: Joi.string().required(),

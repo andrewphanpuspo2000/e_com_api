@@ -51,6 +51,15 @@ const productSchema = mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: true,
     },
+    thumbnail: {
+      type: String,
+      required: true,
+    },
+    images: [
+      {
+        type: String,
+      },
+    ],
   },
   {
     timestamps: true,

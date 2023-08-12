@@ -54,3 +54,6 @@ GET {{payment}}
 
 ###
 GET {{product}}
+
+###
+GET {{product}}/64d747db3ed3690ffb86785c
