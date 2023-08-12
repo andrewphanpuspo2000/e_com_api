@@ -6,6 +6,9 @@
 ####
 @payment= {{root}}api/v1/payment
 
+###
+@product= {{root}}api/v1/product
+
 GET {{root}}
 
 ####
@@ -47,3 +50,7 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJhYmFiYWJAZ21h
 
 ###
 GET {{payment}}
+
+
+###
+GET {{product}}

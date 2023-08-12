@@ -18,7 +18,7 @@ export const updateByEmail = (filter, object) => {
 };
 
 export const deleteById = (_id) => {
-  return userSchema.findAndUpdateById(_id);
+  return userSchema.findByIdAndDelete(_id);
 };
 export const updateActivation = (target, data) => {
   return userSchema.findOneAndUpdate(target, data, { new: true });

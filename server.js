@@ -23,6 +23,9 @@ app.use("/api/v1/category", auth, categoryRouter);
 //payment router
 import paymentRouter from "./src/router/paymentRouter.js";
 app.use("/api/v1/payment", auth, paymentRouter);
+
+import product from "./src/router/productRouter.js";
+app.use("/api/v1/product", auth, product);
 //api default
 app.get("/", (req, res) => {
   res.json({

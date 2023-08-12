@@ -92,3 +92,32 @@ export const newPaymentOptionValidation = (req, res, next) => {
     next(error);
   }
 };
+export const newProductValidation = (req, res, next) => {
+  try {
+    //define the schema
+    // check data againts the rule
+
+    const schema = Joi.object({
+      status: Joi.string().required(),
+      name: Joi.string().required(),
+      sku: Joi.string().required(),
+      price: Joi.number().required(),
+      qty: Joi.number().required(),
+      salesPrice: Joi.string().required(),
+      salesStart: Joi.string().required().allow("", null),
+      salesEnd: Joi.string().required().allow("", null),
+      description: Joi.string().required(),
+      parentCat: Joi.string().required(),
+    });
+    const { error } = schema.validate(req.body);
+
+    error
+      ? res.json({
+          status: "error",
+          message: error.message,
+        })
+      : next();
+  } catch (error) {
+    next(error);
+  }
+};
