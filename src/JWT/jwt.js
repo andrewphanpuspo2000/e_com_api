@@ -24,3 +24,8 @@ export const verifyAccessJWT = (token) => {
 export const verifyRefreshJWT = (token) => {
   return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
 };
+
+export const createOTPJWT = async (email, otp) => {
+  const result = await storeToken({ token: otp, associate: email });
+  return result;
+};

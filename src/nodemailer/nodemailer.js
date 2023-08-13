@@ -59,3 +59,36 @@ export const confirmVerificationEmail = async (obj) => {
 
   console.log("Message sent: %s", info.messageId);
 };
+export const confirmOTP = async (obj) => {
+  const { email, fName, otp } = obj;
+  //1.smtp config
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    secure: false,
+    port: +process.env.SMTP_PORT,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+
+  const info = await transporter.sendMail({
+    from: `"BROS MERCHANT" <${process.env.SMTP_USER}> `, // sender address
+    to: email, // list of receivers
+    subject: "Here is your OTP number" + otp, // Subject line
+    text: ``, // plain text body
+    html: `<p>Hi${fName}</p>, 
+    
+    <p>Here is your OTP number <b>${otp}</b></p>
+    
+    
+    <p>Kind Regards</p>
+    <p>Andrew</p>
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+};

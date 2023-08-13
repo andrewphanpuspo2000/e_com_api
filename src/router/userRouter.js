@@ -1,6 +1,7 @@
 import express from "express";
 import {
   findEmailExist,
+  getOneAdmin,
   pushUser,
   updateActivation,
   updateById,
@@ -12,12 +13,18 @@ import {
 } from "../validation/joiValidation.js";
 import {
   accountVerificationEmail,
+  confirmOTP,
   confirmVerificationEmail,
 } from "../nodemailer/nodemailer.js";
 import { v4 as uuidv4 } from "uuid";
-import { createAccessJWT, createRefreshToken } from "../JWT/jwt.js";
+import {
+  createAccessJWT,
+  createOTPJWT,
+  createRefreshToken,
+} from "../JWT/jwt.js";
 import { auth, refreshAuth } from "../middleware/authMiddleware.js";
 import { deleteSessionToken } from "../sessionModel/SessionModel.js";
+import { otpRandomGenerator } from "../otpGenerator/otpGenerator.js";
 
 const router = express.Router();
 
@@ -171,6 +178,37 @@ router.post("/admin-logout", async (req, res, next) => {
     }
   } catch (err) {
     next(err);
+  }
+});
+
+router.post("/get-OTP", async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    const user = await getOneAdmin({ email });
+    if (user?._id) {
+      const getOtp = otpRandomGenerator();
+      console.log("step 1");
+      const createToken = await createOTPJWT(email, getOtp);
+      if (createToken?._id) {
+        console.log("step 2");
+        const sendOtpEmail = await confirmOTP({
+          email,
+          fName: user.fName,
+          otp: getOtp,
+        });
+        return res.json({
+          status: "success",
+          message: "Please check your email to get the OTP",
+        });
+      }
+    }
+    return res.json({
+      status: "error",
+      message: "Email is not exist",
+    });
+  } catch (error) {
+    next(error);
   }
 });
 export default router;

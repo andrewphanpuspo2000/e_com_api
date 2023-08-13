@@ -1,9 +1,13 @@
 import express from "express";
 import slugify from "slugify";
-import { newProductValidation } from "../validation/joiValidation.js";
+import {
+  newProductValidation,
+  updateProductValidation,
+} from "../validation/joiValidation.js";
 import {
   addProduct,
   deleteProductById,
+  editByIdProduct,
   getAllProduct,
   getProductById,
 } from "../productDB/productModel.js";
@@ -45,6 +49,31 @@ router.post(
         res.json({
           status: "success",
           message: "Product has been added",
+        });
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+router.put(
+  "/",
+  upload.array("images", 5),
+  updateProductValidation,
+  async (req, res, next) => {
+    try {
+      console.log(req.files);
+      if (req?.files?.length) {
+        const newImg = req.files.map((item) => item.path);
+        req.body.images = [...newImg, ...req.body.images];
+      }
+      const { _id, ...rest } = req.body;
+      const result = await editByIdProduct(_id, rest);
+
+      if (result?._id) {
+        res.json({
+          status: "success",
+          message: "Product has been updated",
         });
       }
     } catch (err) {

@@ -121,3 +121,46 @@ export const newProductValidation = (req, res, next) => {
     next(error);
   }
 };
+export const updateProductValidation = (req, res, next) => {
+  try {
+    //define the schema
+    // check data againts the rule
+    req.body.salesStart =
+      req.body.salesStart === "null" || !req.body.salesStart
+        ? null
+        : req.body.salesStart;
+
+    req.body.salesEnd =
+      req.body.salesEnd === "null" || !req.body.salesEnd
+        ? null
+        : req.body.salesEnd;
+
+    const schema = Joi.object({
+      status: Joi.string().required(),
+      name: Joi.string().required(),
+      _id: Joi.string().required(),
+
+      price: Joi.number().required(),
+      qty: Joi.number().required(),
+      sku: Joi.string().required(),
+      salesPrice: Joi.number().required(),
+      salesStart: Joi.string().required().allow("", null),
+      salesEnd: Joi.string().required().allow("", null),
+      description: Joi.string().required(),
+      parentCat: Joi.string().required(),
+      images: Joi.string().allow(""),
+      thumbnail: Joi.string().allow(""),
+    });
+    const { error } = schema.validate(req.body);
+    console.log("req.images split :", req.body.images);
+    req.body.images = req.body.images.split(",");
+    error
+      ? res.json({
+          status: "error",
+          message: error.message,
+        })
+      : next();
+  } catch (error) {
+    next(error);
+  }
+};
