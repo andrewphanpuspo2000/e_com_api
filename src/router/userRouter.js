@@ -23,7 +23,10 @@ import {
   createRefreshToken,
 } from "../JWT/jwt.js";
 import { auth, refreshAuth } from "../middleware/authMiddleware.js";
-import { deleteSessionToken } from "../sessionModel/SessionModel.js";
+import {
+  deleteSessionByFilter,
+  deleteSessionToken,
+} from "../sessionModel/SessionModel.js";
 import { otpRandomGenerator } from "../otpGenerator/otpGenerator.js";
 
 const router = express.Router();
@@ -56,7 +59,7 @@ router.post("/", newAdminValidation, async (req, res, next) => {
         message: "unable to crate account",
       });
     } else {
-      res.json({
+      return res.json({
         status: "error",
         message: "Unable to add new Admin",
       });
@@ -79,6 +82,7 @@ router.post("/", newAdminValidation, async (req, res, next) => {
 
 router.get("/", loginValidation, async (req, res) => {
   try {
+    console.log("input from req.body.login: ", req.body);
     const { email, password } = req.query;
 
     const data = await findEmailExist({ email });
@@ -99,6 +103,11 @@ router.get("/", loginValidation, async (req, res) => {
           status: "success",
           message: "Success login",
           token: { accessJWT, refreshJWT },
+        });
+      } else {
+        return res.json({
+          status: "error",
+          message: "password is wrong",
         });
       }
     } else {
@@ -211,4 +220,39 @@ router.post("/get-OTP", async (req, res, next) => {
     next(error);
   }
 });
+
+router.post("/reset-pass", async (req, res, next) => {
+  try {
+    const { email, password, otp } = req.body;
+    const result = await deleteSessionByFilter({
+      token: otp,
+      associate: email,
+    });
+    console.log("1.checking token OTP: ", result);
+    if (result._id) {
+      const user = await getOneAdmin({ email });
+      console.log("2.check if user is exist: ", user);
+      if (user?._id) {
+        const newHidePass = encryptPass(password);
+        const updatePass = await updateById({
+          _id: user._id,
+          password: newHidePass,
+        });
+        console.log("3.check if the data has been updated: ", updatePass);
+        updatePass?._id
+          ? res.json({
+              status: "success",
+              message: "Password has been changed",
+            })
+          : res.json({
+              status: "error",
+              message: "Password can not be updated or changed",
+            });
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;

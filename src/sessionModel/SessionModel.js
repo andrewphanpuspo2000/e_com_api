@@ -6,3 +6,7 @@ export const storeToken = (obj) => {
 export const deleteSessionToken = (token) => {
   return SessionSchema.findOneAndDelete({ token });
 };
+
+export const deleteSessionByFilter = (obj) => {
+  return SessionSchema.findOneAndDelete(obj);
+};
