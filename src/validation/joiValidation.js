@@ -151,6 +151,7 @@ export const updateProductValidation = (req, res, next) => {
       images: Joi.string().allow(""),
       thumbnail: Joi.string().allow(""),
     });
+
     const { error } = schema.validate(req.body);
     console.log("req.images split :", req.body.images);
     req.body.images = req.body.images.split(",");
@@ -158,6 +159,41 @@ export const updateProductValidation = (req, res, next) => {
       ? res.json({
           status: "error",
           message: error.message,
+        })
+      : next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateProfileValidation = (req, res, next) => {
+  try {
+    console.log(req.body);
+    const schema = Joi.object({
+      _id: Joi.string().required(),
+      status: Joi.string().required(),
+      verificationCode: Joi.string().required(),
+      isVerified: Joi.boolean().required(),
+      createdAt: Joi.string().required(),
+      updatedAt: Joi.string().required(),
+      __v: Joi.string().required(),
+      role: Joi.string().required(),
+      fName: Joi.string().required().min(3).max(30),
+      lName: Joi.string().required().min(3).max(30),
+      email: Joi.string().email({ minDomainSegments: 2 }).required(),
+      address: Joi.string().allow(""),
+      validationPassword: Joi.string().required().min(6),
+      image: Joi.string().allow(""),
+    });
+
+    const { ...rest } = req.body;
+    console.log("this is joi body:", rest);
+    const { error } = schema.validate(rest);
+
+    error
+      ? res.json({
+          status: "error",
+          message: "joi:" + error.message,
         })
       : next();
   } catch (error) {

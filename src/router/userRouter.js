@@ -1,6 +1,7 @@
 import express from "express";
 import {
   findEmailExist,
+  getAllAdmin,
   getOneAdmin,
   pushUser,
   updateActivation,
@@ -10,6 +11,7 @@ import { comparePass, encryptPass } from "../encrypt/encryptPass.js";
 import {
   loginValidation,
   newAdminValidation,
+  updateProfileValidation,
 } from "../validation/joiValidation.js";
 import {
   accountVerificationEmail,
@@ -28,6 +30,8 @@ import {
   deleteSessionToken,
 } from "../sessionModel/SessionModel.js";
 import { otpRandomGenerator } from "../otpGenerator/otpGenerator.js";
+
+import multer, { MulterError } from "multer";
 
 const router = express.Router();
 
@@ -255,4 +259,76 @@ router.post("/reset-pass", async (req, res, next) => {
   }
 });
 
+router.get("/get-all-admin", async (req, res, next) => {
+  try {
+    const data = await getAllAdmin();
+    if (data?.length) {
+      return res.json({
+        status: "success",
+        message: "All admin data have been retrieved",
+        data: data,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+const targetImageStorage = "src/public/img/user-images";
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const error = null;
+    //validation check
+    cb(error, targetImageStorage);
+  },
+  filename: (req, file, cb) => {
+    const error = null;
+    const fileName = Date.now() + "-" + file.originalname;
+    cb(error, fileName);
+  },
+});
+
+const upload = multer({ storage });
+
+router.put(
+  "/update-profile",
+
+  upload.single("image"),
+  updateProfileValidation,
+  auth,
+  async (req, res, next) => {
+    try {
+      console.log(req.body._id);
+      if (req?.file) {
+        console.log(req?.file);
+        req.body.image = req?.file?.path;
+      }
+      const { validationPassword, _id, ...rest } = req.body;
+      const { email } = req.userInfo;
+      const { password } = await getOneAdmin({ email });
+      if (password) {
+        const compare = comparePass(validationPassword, password);
+        if (compare) {
+          const result = await updateById({ _id, ...rest });
+          result?._id
+            ? res.json({
+                status: "success",
+                message: "profile has been updated",
+              })
+            : res.json({
+                status: "success",
+                message: "data can not be updated",
+              });
+        } else {
+          return res.json({
+            status: "error",
+            message: "Password is incorrect",
+          });
+        }
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 export default router;
