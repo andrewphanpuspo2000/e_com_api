@@ -11,6 +11,7 @@ import { comparePass, encryptPass } from "../encrypt/encryptPass.js";
 import {
   loginValidation,
   newAdminValidation,
+  newPasswordValidation,
   updateProfileValidation,
 } from "../validation/joiValidation.js";
 import {
@@ -325,6 +326,54 @@ router.put(
             message: "Password is incorrect",
           });
         }
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.patch(
+  "/new-password",
+  newPasswordValidation,
+  auth,
+  async (req, res, next) => {
+    try {
+      const { newPassword, currentPassword } = req.body;
+      const { email } = req.userInfo;
+      const adminData = await getOneAdmin({ email });
+      if (adminData?._id) {
+        const comparePassResult = comparePass(
+          currentPassword,
+          adminData.password
+        );
+        console.log(comparePassResult);
+        if (comparePassResult) {
+          const encryptPassResult = encryptPass(newPassword);
+          const pushNewPassword = await updateById({
+            _id: adminData._id,
+            password: encryptPassResult,
+          });
+          pushNewPassword?._id
+            ? res.json({
+                status: "success",
+                message: "password has been updated",
+              })
+            : res.json({
+                status: "error",
+                message: "password can not be updated",
+              });
+        } else {
+          res.json({
+            status: "error",
+            message: "password is not match with previous password",
+          });
+        }
+      } else {
+        return res.json({
+          status: "error",
+          message: "email is not found",
+        });
       }
     } catch (err) {
       next(err);

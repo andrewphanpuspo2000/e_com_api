@@ -200,3 +200,23 @@ export const updateProfileValidation = (req, res, next) => {
     next(error);
   }
 };
+
+export const newPasswordValidation = (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      newPassword: Joi.string().min(6).required(),
+      currentPassword: Joi.string().min(6).required(),
+    });
+
+    const { error } = schema.validate(req.body);
+
+    error
+      ? res.json({
+          status: "error",
+          message: error.message,
+        })
+      : next();
+  } catch (err) {
+    next(err);
+  }
+};
