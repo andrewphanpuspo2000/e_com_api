@@ -6,16 +6,34 @@ import {
   getAllCategories,
   updateCatModel,
 } from "../categoryDB/categoryModel.js";
-import { updateCatValidation } from "../validation/joiValidation.js";
 
+import multer from "multer";
 const router = express.Router();
+const targetFolder = "src/public/img/category";
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const error = null;
+    cb(error, targetFolder);
+  },
+  filename: (req, file, cb) => {
+    const error = null;
+    const filename = Date.now() + "-" + file.originalname;
+    cb(error, filename);
+  },
+});
 
-router.post("/", async (req, res, next) => {
+const upload = multer({ storage });
+router.post("/", upload.single("image"), async (req, res, next) => {
   try {
     const { title } = req.body;
+    if (req?.file) {
+      req.body.image = req?.file?.path;
+      console.log(req.file);
+    }
     const obj = {
       title,
       slug: slugify(title, { trim: true, lower: false }),
+      image: req.body.image,
     };
 
     const result = await addTitle(obj);
