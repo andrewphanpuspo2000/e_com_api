@@ -176,7 +176,9 @@ router.post("/logout", (req, res, next) => {
     const { accessJWT, refreshJWT } = req.body;
 
     accessJWT && deleteSessionToken(accessJWT);
-  } catch (err) {}
+  } catch (err) {
+    next(err);
+  }
 });
 
 // create accessToken
